@@ -1,0 +1,43 @@
+name: Deploy Download Counter
+on:
+  push:
+    branches: [main]
+    paths: ['worker/**', 'wrangler.jsonc', '.github/workflows/worker.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: download-counter
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Check deployment credential
+        id: credential
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -n "$CF_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::The counter was provisioned separately. Add a scoped CLOUDFLARE_API_TOKEN to enable automated Worker deployments."
+          fi
+      - run: npx wrangler d1 migrations apply busy-apps-metrics --remote
+        if: steps.credential.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - run: npm run worker:deploy
+        if: steps.credential.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

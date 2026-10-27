@@ -1,0 +1,15 @@
+---
+import Preview from './Preview.astro';
+import { sourceLabel } from '../lib/apps';
+const { app } = Astro.props;
+---
+<a href={app.url} class="app-card" data-app-card data-id={app.id} data-name={app.name} data-search={[app.name,app.description,app.author,...app.tags].join(' ').toLowerCase()} data-tags={JSON.stringify(app.tags)} data-author={app.author} data-source={app.source} data-status={app.status} data-created={app.createdAt ?? ''} data-updated={app.updatedAt ?? ''} data-rating={app.rating} data-downloads={app.downloads}>
+  <Preview {app} />
+  <div class="card-body">
+    <div class="metadata"><span class="kind">BUSY App</span><span class:list={['status', app.status]}>{app.status}</span></div>
+    <h2>{app.name}</h2><p class="card-description">{app.description}</p>
+    <span class="source-label">{sourceLabel(app.source)}</span>
+    <div class="tags">{app.tags.slice(0,3).map((tag: string) => <span>{tag}</span>)}</div>
+    <div class="card-bottom"><span class="author">{app.author}</span><span title="Positive reactions">▲ {app.rating}</span><span title="Package download starts">↓ <span data-download-count={app.id}>{app.downloads.toLocaleString('en-US')}</span></span></div>
+  </div>
+</a>

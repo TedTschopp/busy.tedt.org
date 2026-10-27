@@ -1,0 +1,7 @@
+name: Flightradar
+author: maxswinkels
+description: Quiet until a plane flies over, then a split-flap board shows its callsign, aircraft type, route, and live altitude and speed, from live ADS-B data.
+tags:
+  - info
+  - monitor
+preview: ./preview.gif

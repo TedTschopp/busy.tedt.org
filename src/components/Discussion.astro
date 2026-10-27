@@ -1,0 +1,10 @@
+---
+import { config, repo } from '../lib/apps';
+const { appId, number, title = 'Rate and Discuss', category = 'App Discussions' } = Astro.props;
+const href = number ? `${repo}/discussions/${number}` : `${repo}/discussions/categories/app-discussions`;
+---
+<section class="discussion-section" id="rate" aria-label={title}>
+  <span class="eyebrow">The Community Workbench</span><h2>{title}</h2>
+  <p class="muted">Comments and reactions live in this site’s GitHub repository. Sign in with GitHub to participate.</p>
+  {config.giscusEnabled ? <div class="giscus" data-discussion data-term={number ? String(number) : `app:${appId}`} data-mapping={number ? 'number' : 'specific'} data-category={category} data-category-id={category === 'Ideas' ? config.ideasCategoryId : config.appCategoryId}></div> : <p><a href={href}>Open the Discussion on GitHub →</a></p>}
+</section>

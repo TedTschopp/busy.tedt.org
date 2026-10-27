@@ -1,0 +1,39 @@
+title: ""
+labels: ["idea:proposed"]
+body:
+  - type: markdown
+    attributes:
+      value: "Describe the app you wish existed. Working code is not required."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would it solve?
+      description: Who would use this, and when would it help?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What should the app do?
+      description: Describe its normal behavior and any controls.
+    validations:
+      required: true
+  - type: textarea
+    id: display
+    attributes:
+      label: What should the display show?
+      description: Text, colors, animation, timers, or a small sketch.
+    validations:
+      required: true
+  - type: textarea
+    id: integrations
+    attributes:
+      label: What would it connect to?
+      description: Services, data sources, or local applications; write none if it can stand alone.
+    validations:
+      required: true
+  - type: textarea
+    id: help
+    attributes:
+      label: How could you help?
+      description: Optional testing, design, sample data, or implementation help.

@@ -1,0 +1,108 @@
+name: Refresh and Publish
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *'
+      timezone: America/Los_Angeles
+  workflow_dispatch:
+  discussion:
+    types: [created, edited, deleted, transferred, labeled, unlabeled, category_changed, locked, unlocked]
+  discussion_comment:
+    types: [created, edited, deleted]
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  discussions: read
+concurrency:
+  group: production
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      deploy: ${{ steps.changes.outputs.deploy }}
+      commit: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Import complete upstream apps
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: npm run sync
+      - name: Refresh community and download snapshots
+        run: npm run community
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - name: Determine publication changes
+        id: changes
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = push ] || [ "$EVENT" = workflow_dispatch ] || ! git diff --quiet -- apps/community src/data; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'deploy=false' >> "$GITHUB_OUTPUT"
+            echo 'No catalog or community changes. No commit or deployment.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Commit only validated source snapshots
+        id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BASE=$(git rev-parse HEAD)
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$BASE"
+          git add -f -- apps/community
+          git add -- src/data/import-state.json src/data/community.json src/data/downloads.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git diff --cached --check -- . ':!apps/community/**'
+            git commit -m 'chore(catalog): refresh validated app and community snapshots'
+            gh auth setup-git
+            git push origin HEAD:main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          node -e 'require("fs").writeFileSync("dist/version.json", JSON.stringify({commit:process.argv[1]})+"\n")' "$(git rev-parse HEAD)"
+      - uses: actions/upload-pages-artifact@v4
+        if: steps.changes.outputs.deploy == 'true'
+        with:
+          path: dist
+  deploy:
+    needs: build
+    if: needs.build.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - name: Deploy validated site
+        id: pages
+        uses: actions/deploy-pages@v4
+      - name: Verify public commit
+        env:
+          EXPECTED: ${{ needs.build.outputs.commit }}
+        run: |
+          for attempt in $(seq 1 24); do
+            if curl -fsS "https://busy.tedt.org/version.json?commit=$EXPECTED" | jq -e --arg sha "$EXPECTED" '.commit == $sha'; then
+              echo "Published and verified $EXPECTED at https://busy.tedt.org" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1

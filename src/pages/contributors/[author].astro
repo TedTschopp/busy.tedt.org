@@ -1,0 +1,8 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppCard from '../../components/AppCard.astro';
+import {apps} from '../../lib/apps';
+export function getStaticPaths(){return [...new Set(apps.map(a=>a.authorSlug))].map(author=>({params:{author},props:{authorApps:apps.filter(a=>a.authorSlug===author)}}));}
+const {authorApps}=Astro.props;const author=authorApps[0].author;
+---
+<Layout title={`Apps by ${author}`} description={`Browse BUSY Bar apps contributed by ${author}.`}><header class="page-heading content"><a href="/contributors/">← All Contributors</a><h1>{author}</h1><p>{authorApps.length} apps in the library.</p><div class="accent-rule"></div></header><section class="app-grid content" style="padding-bottom:4rem">{authorApps.map((app:any)=><AppCard {app} />)}</section></Layout>

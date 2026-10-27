@@ -1,0 +1,6 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {apps} from '../../lib/apps';
+const authors=[...new Map(apps.map(a=>[a.authorSlug,{name:a.author,slug:a.authorSlug}])).values()].sort((a,b)=>a.name.localeCompare(b.name));
+---
+<Layout title="Contributors" description="Meet the people building apps for the BUSY Bar community."><header class="page-heading content"><span class="eyebrow">People Behind the Pixels</span><h1>Contributors</h1><p>Original authors are credited on every app. Browse their work and follow the links to their projects.</p><div class="accent-rule"></div></header><section class="contributor-list content" style="padding-bottom:4rem">{authors.map(a=><a class="contributor-card" href={`/contributors/${a.slug}/`}><span class="avatar">{a.name.slice(0,2).toUpperCase()}</span><div><h2 style="font-size:1.1rem">{a.name}</h2><p class="small muted">{apps.filter(app=>app.authorSlug===a.slug).length} apps</p></div></a>)}</section></Layout>

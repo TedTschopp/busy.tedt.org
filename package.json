@@ -1,0 +1,39 @@
+{
+  "name": "busy-tedt-org",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "preview": "astro preview --host 127.0.0.1",
+    "catalog": "node scripts/build-catalog.mjs",
+    "build": "npm run catalog && astro build && node scripts/verify-site.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "sync": "node scripts/sync-upstream.mjs",
+    "community": "node scripts/sync-community.mjs",
+    "validate": "node scripts/build-catalog.mjs --check",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "test:browser": "playwright test"
+  },
+  "dependencies": {
+    "astro": "^7.2.8",
+    "@tailwindcss/vite": "^4.1.4",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^4.1.4",
+    "js-yaml": "^4.3.2",
+    "adm-zip": "^0.6.1",
+    "marked": "^16.4.1",
+    "sanitize-html": "^2.17.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "wrangler": "^4.45.0",
+    "@playwright/test": "^1.56.1"
+  },
+  "overrides": {
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^7.1.6"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+---
+import '../styles/global.css';
+import '../styles/busy.css';
+import UniversalHeader from '../components/UniversalHeader.astro';
+import { repo } from '../lib/apps';
+interface Props { title?: string; description?: string; image?: string; type?: string; structuredData?: unknown; }
+const { title = 'BUSY Bar Apps', description = 'Browse complete BUSY Bar apps, inspect their source, download the files, and share ideas for what to build next.', image = '/social/catalog.jpg', type = 'website', structuredData } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const links = [{name:'Apps',href:'/'},{name:'Ideas',href:'/ideas/'},{name:'Contributors',href:'/contributors/'},{name:'Submit an App',href:'/submit/'},{name:'About',href:'/about/'}];
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === 'BUSY Bar Apps' ? title : `${title} · BUSY Bar Apps`}</title>
+    <meta name="description" content={description} /><meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href={canonical} /><link rel="icon" type="image/png" href="/favicon.png" />
+    <meta property="og:type" content={type} /><meta property="og:site_name" content="BUSY Bar Apps" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} /><meta property="og:image" content={new URL(image, Astro.site).href} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} /><meta name="twitter:image" content={new URL(image, Astro.site).href} />
+    <script is:inline>try { const p = localStorage.getItem('theme'); document.documentElement.setAttribute('data-theme', p === 'dark' || (p !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'); } catch {}</script>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData ?? { '@context': 'https://schema.org', '@type': 'WebSite', name: 'BUSY Bar Apps', url: 'https://busy.tedt.org/' }).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <UniversalHeader />
+    <div class="shelf"><a class="shelf-brand" href="/">BUSY.Tedt.org <span>BUSY Bar Apps</span></a><nav aria-label="BUSY Bar Apps">{links.map(l => <a href={l.href} aria-current={Astro.url.pathname === l.href ? 'page' : undefined}>{l.name}</a>)}<button type="button" class="text-button" style="margin:0" data-motion-toggle aria-pressed="false">Pause Previews</button></nav></div>
+    <main id="main"><slot /></main>
+    <footer class="site-footer content">
+      <div><a href="https://tedt.org/">Ted Tschopp’s Public Workbench</a><p>Complete apps, original authors, and room for the next idea.</p></div>
+      <div><a href={repo}>Source and Contributions</a> · <a href={`${repo}/actions`}>Catalog Updates</a> · <a href="/apps.json">Catalog JSON</a><p>Unofficial community site. BUSY Bar is a trademark of Flipper Devices. <a href="/about/#attribution">Credits and Licenses</a></p></div>
+    </footer>
+    <script>import '../scripts/site';</script>
+  </body>
+</html>

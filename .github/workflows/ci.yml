@@ -1,0 +1,32 @@
+name: Validate App Library
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - name: Protect mirrored app payloads from direct edits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git diff --name-only "$BASE"...HEAD -- apps/community src/data/import-state.json | grep -q .; then
+            echo 'Imported app changes must come through the upstream importer. Local submissions belong in apps/tedt/.'
+            exit 1
+          fi

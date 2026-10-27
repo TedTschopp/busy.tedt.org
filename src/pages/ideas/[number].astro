@@ -1,0 +1,9 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Discussion from '../../components/Discussion.astro';
+import { ideas, dateLabel } from '../../lib/apps';
+import { renderDocumentation } from '../../../scripts/catalog-lib.mjs';
+export function getStaticPaths(){return ideas.map((idea:any)=>({params:{number:String(idea.number)},props:{idea}}));}
+const {idea}=Astro.props;
+---
+<Layout title={idea.title} description={idea.excerpt}><article class="prose-page"><a href="/ideas/">← All Ideas</a><header class="page-heading" style="padding-bottom:1rem"><span class="eyebrow">App Idea · {idea.status}</span><h1>{idea.title}</h1><p class="small muted">{idea.author} · {dateLabel(idea.createdAt)} · ▲ {idea.support}</p><div class="accent-rule"></div></header><div class="rendered-doc" set:html={renderDocumentation(idea.body)} /><p><a class="button secondary" href={idea.url}>Vote or Reply on GitHub</a></p><Discussion number={idea.number} category="Ideas" title="Discuss This Idea" /></article></Layout>

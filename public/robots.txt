@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /downloads/
+Sitemap: https://busy.tedt.org/sitemap.xml

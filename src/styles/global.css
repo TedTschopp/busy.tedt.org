@@ -1,0 +1,345 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap");
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* AI.Tedt.org inherits the tedt.org Public Workbench palette. Components keep
+   styling against semantic tokens so light and dark themes stay equivalent. */
+@theme {
+  --color-bg: var(--surface-page);
+  --color-surface: var(--surface-card);
+  --color-surface-2: var(--surface-panel);
+  --color-fg: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-subtle: var(--text-muted);
+  --color-border: var(--border-default);
+  --color-accent: var(--action-primary-bg);
+  --color-accent-fg: var(--action-primary-fg);
+  --color-accent-soft: var(--accent-signal-soft);
+  --color-accent-text: var(--accent-signal-text);
+  --color-cta: var(--action-cta-bg);
+  --color-cta-fg: var(--action-cta-fg);
+
+  --font-sans: Inter, "Noto Sans", "Helvetica Neue", "Segoe UI", Roboto,
+    "Liberation Sans", sans-serif;
+  --font-display: "Cal Sans", "Titillium Web", Optima, Palatino, "Book Antiqua",
+    Georgia, serif;
+  --font-mono: "Fira Code", SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+
+  --container-8xl: 97.5rem;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Canonical palette */
+  --paper: #f8f6f0;
+  --ink: #07090f;
+  --slate: #101820;
+  --gray-100: #e0deda;
+  --gray-200: #c8c7c3;
+  --gray-300: #b0afac;
+  --gray-400: #989796;
+  --gray-500: #808080;
+  --gray-600: #676869;
+  --gray-700: #4f5052;
+  --gray-800: #37383c;
+  --gray-900: #1f2126;
+  --navy: #00446f;
+  --orange: #e86027;
+  --cyan: #00a9e0;
+  --link-blue: #007bff;
+  --gold: #f2bc57;
+  --rust: #6f1a07;
+  --success: #00b339;
+  --danger: #f90041;
+  --highlight: #ffff66;
+
+  /* Surface stack: page -> section -> card -> panel -> inset */
+  --surface-page: var(--paper);
+  --surface-section: #f2efe7;
+  --surface-card: #fffdf8;
+  --surface-panel: #edeae1;
+  --surface-inset: #e7e3d9;
+
+  --text-primary: var(--ink);
+  --text-secondary: var(--gray-700);
+  --text-muted: var(--gray-600);
+  --text-heading: var(--navy);
+  --text-inverse: var(--paper);
+
+  --border-subtle: var(--gray-100);
+  --border-default: var(--gray-200);
+  --border-strong: var(--gray-400);
+
+  --link: var(--link-blue);
+  --link-hover: #0056b3;
+  --action-primary-bg: var(--navy);
+  --action-primary-fg: var(--paper);
+  --action-primary-hover: #003356;
+  --action-cta-bg: var(--orange);
+  --action-cta-fg: var(--ink);
+  --action-cta-hover: #c94e1c;
+  --accent-signal: var(--cyan);
+  --accent-signal-soft: #dcf3fb;
+  --accent-signal-text: #005e7d;
+  --accent-rule: linear-gradient(
+    90deg,
+    var(--cyan) 0%,
+    var(--navy) 60%,
+    var(--orange) 100%
+  );
+
+  --platform-cowork: var(--navy);
+  --platform-copilot-studio: var(--cyan);
+  --platform-scout: var(--orange);
+  --platform-codex: var(--slate);
+
+  --status-active: var(--success);
+  --status-beta: var(--cyan);
+  --status-maintained: var(--navy);
+  --status-prototype: var(--gold);
+  --status-archived: var(--gray-500);
+
+  --code-bg: var(--surface-panel);
+  --code-fg: var(--rust);
+
+  /* Geometry and motion */
+  --radius-sm: 0.25rem;
+  --radius: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-pill: 50rem;
+  --shadow-sm: 0 0.125rem 0.25rem rgba(7, 9, 15, 0.075);
+  --shadow: 0 0.5rem 1rem rgba(7, 9, 15, 0.15);
+  --shadow-lg: 0 1rem 3rem rgba(7, 9, 15, 0.175);
+  --shadow-inset: inset 0 1px 2px rgba(7, 9, 15, 0.075);
+  --focus-ring: 0 0 0 0.25rem rgba(0, 68, 111, 0.25);
+  --duration: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+  --measure: 68ch;
+
+  /* Compatibility aliases for upstream components and scoped styles. */
+  --bg: var(--surface-page);
+  --surface: var(--surface-card);
+  --surface-2: var(--surface-panel);
+  --fg: var(--text-primary);
+  --muted: var(--text-secondary);
+  --subtle: var(--text-muted);
+  --border: var(--border-default);
+  --accent: var(--action-primary-bg);
+  --accent-fg: var(--action-primary-fg);
+  --accent-soft: var(--accent-signal-soft);
+  --accent-text: var(--accent-signal-text);
+  --glow: rgba(0, 169, 224, 0.18);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-page: var(--slate);
+  --surface-section: #161f29;
+  --surface-card: #1b2530;
+  --surface-panel: #202b37;
+  --surface-inset: #0b1219;
+
+  --text-primary: #e7e5e0;
+  --text-secondary: var(--gray-300);
+  --text-muted: var(--gray-400);
+  --text-heading: #e7e5e0;
+  --text-inverse: var(--ink);
+
+  --border-subtle: #2a3742;
+  --border-default: #38454f;
+  --border-strong: var(--gray-700);
+
+  --link: #66b0ff;
+  --link-hover: #99cbff;
+  --action-primary-bg: #0a5c93;
+  --action-primary-fg: var(--paper);
+  --action-primary-hover: #0e71b4;
+  --action-cta-bg: var(--orange);
+  --action-cta-fg: var(--ink);
+  --action-cta-hover: #f2793f;
+  --accent-signal: #4fc7f2;
+  --accent-signal-soft: #0c3245;
+  --accent-signal-text: #9fd9f2;
+
+  --platform-cowork: #4e9fd1;
+  --platform-copilot-studio: #4fc7f2;
+  --platform-scout: #f2793f;
+  --platform-codex: var(--text-primary);
+
+  --code-bg: var(--surface-inset);
+  --code-fg: var(--gold);
+  --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.4);
+  --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.6);
+  --focus-ring: 0 0 0 0.25rem rgba(0, 169, 224, 0.35);
+  --glow: rgba(79, 199, 242, 0.24);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--surface-page);
+}
+
+body {
+  min-width: 20rem;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-heading);
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition-duration: var(--duration);
+  transition-timing-function: var(--ease);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--highlight);
+  color: var(--ink);
+}
+
+.accent-rule {
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-rule);
+}
+
+.display-face {
+  font-family: var(--font-display);
+}
+
+.mono-face {
+  font-family: var(--font-mono);
+}
+
+.library-filter-select {
+  width: 100%;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  box-shadow: var(--shadow-inset);
+}
+
+.library-filter-select:hover,
+.library-filter-select:focus-visible {
+  border-color: var(--border-strong);
+}
+
+[data-library-item][hidden],
+[data-library-empty][hidden] {
+  display: none;
+}
+
+.prompt-workbench textarea[data-prompt-output] {
+  tab-size: 2;
+}
+
+.prompt-workbench input:invalid,
+.prompt-workbench textarea:invalid,
+.prompt-workbench select:invalid {
+  border-color: color-mix(in srgb, var(--danger) 60%, var(--border-default));
+}
+
+.prose :where(table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose :where(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  box-shadow: var(--shadow-inset);
+}
+
+.prose :where(code):not(:where(pre code)) {
+  overflow-wrap: break-word;
+  color: var(--code-fg);
+  font-family: var(--font-mono);
+  word-break: break-word;
+}
+
+.prose :where(pre) code {
+  color: inherit;
+}
+
+.prose :where(a) {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.prose :where(a:hover) {
+  color: var(--link-hover);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-panel);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background: var(--border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

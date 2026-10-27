@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppCard from '../components/AppCard.astro';
+import { apps } from '../lib/apps';
+const tags = [...new Set(apps.flatMap(a => a.tags))].sort();
+const authors = [...new Set(apps.map(a => a.author))].sort((a,b)=>a.localeCompare(b));
+const ordered = [...apps].sort((a,b)=>(b.createdAt??'').localeCompare(a.createdAt??'')||a.name.localeCompare(b.name));
+---
+<Layout title="BUSY Bar Apps" structuredData={{'@context':'https://schema.org','@type':'CollectionPage',name:'BUSY Bar Apps',url:'https://busy.tedt.org/',mainEntity:{'@type':'ItemList',numberOfItems:apps.filter(a=>a.status==='active').length,itemListElement:apps.filter(a=>a.status==='active').map((a,i)=>({'@type':'ListItem',position:i+1,name:a.name,url:`https://busy.tedt.org${a.url}`}))}}}>
+  <header class="page-heading content"><span class="eyebrow">The Public Workbench for BUSY Bar</span><h1>BUSY Bar Apps</h1><p>Find an app for your desk. See what it does, inspect the source, and download the complete files. Share an idea for what comes next.</p><div class="accent-rule"></div></header>
+  <div class="catalog-layout content" data-catalog>
+    <aside class="filter-panel" aria-label="App filters"><label for="search">Search</label><div class="search-row"><input id="search" type="search" placeholder="Title, purpose, tag, or contributor…" autocomplete="off" /><button type="button" data-clear>Clear</button></div>
+      <label for="tag">Tags</label><select id="tag"><option value="">All tags</option>{tags.map(t=><option value={t}>{t}</option>)}</select>
+      <label for="contributor">Contributor</label><select id="contributor"><option value="">All contributors</option>{authors.map(a=><option value={a}>{a}</option>)}</select>
+      <label for="source">Catalog Source</label><select id="source"><option value="">All sources</option><option value="community">Community mirror</option><option value="tedt">TedT.org community</option></select>
+      <label for="status">Status</label><select id="status"><option value="active">Active apps</option><option value="archived">Archived apps</option><option value="">All apps</option></select>
+      <button class="text-button" type="button" data-reset>Reset Filters</button>
+      <div class="filter-note"><p>Have something in mind?</p><a href="/ideas/">Browse App Ideas →</a></div>
+    </aside>
+    <section aria-labelledby="results-heading" class="results"><div class="results-heading"><h2 id="results-heading">Apps (<span data-result-count>{apps.filter(a=>a.status==='active').length}</span>)</h2><label class="sort-label" for="sort">Sort <select id="sort"><option value="newest">Newest</option><option value="updated">Recently Updated</option><option value="rating">Top Rated</option><option value="downloads">Most Downloaded</option><option value="name">Name (A–Z)</option></select></label></div>
+      <div class="app-grid" data-gallery>{ordered.map(app=><AppCard {app} />)}</div><p hidden data-empty class="empty-state" role="status">Nothing matches those filters. Reset one and try again.</p><p class="sr-only" aria-live="polite" data-results-live></p>
+    </section>
+  </div>
+  <script>import '../scripts/catalog';</script>
+</Layout>

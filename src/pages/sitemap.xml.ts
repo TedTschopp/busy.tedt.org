@@ -1,0 +1,2 @@
+import {apps,ideas} from '../lib/apps';
+export function GET(){const paths=['/','/ideas/','/contributors/','/submit/','/about/',...apps.map(a=>a.url),...[...new Set(apps.map(a=>a.authorSlug))].map(s=>`/contributors/${s}/`),...ideas.map((i:any)=>`/ideas/${i.number}/`)];return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map(p=>`<url><loc>https://busy.tedt.org${p.replace(/&/g,'&amp;')}</loc></url>`).join('')}</urlset>`,{headers:{'Content-Type':'application/xml'}});}

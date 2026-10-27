@@ -1,0 +1,8 @@
+---
+const { app, eager = false } = Astro.props;
+---
+<div class="app-preview" data-preview>
+  <img class="preview-still" src={app.stillPreview} alt={`${app.name} on the BUSY Bar display`} width="720" height="160" loading={eager ? 'eager' : 'lazy'} />
+  {app.animated && <img class="preview-animation" src={app.preview} alt="" aria-hidden="true" width="720" height="160" loading={eager ? 'eager' : 'lazy'} />}
+  <span class="preview-caption" aria-hidden="true">BUSY BAR · 72 × 16</span>
+</div>

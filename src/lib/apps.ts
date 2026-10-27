@@ -1,0 +1,11 @@
+import catalog from '../data/catalog.json';
+import community from '../data/community.json';
+import site from '../data/site.json';
+export const apps = catalog;
+export const ideas = community.ideas;
+export const config = site;
+export const repo = `https://github.com/${site.repository}`;
+export const dateLabel = (value: string | null) => value ? new Date(value).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles' }) : 'Not recorded';
+export const sourceLabel = (source: string) => source === 'community' ? 'Community mirror' : 'TedT.org community';
+export const ideaUrl = `${repo}/discussions/new?category=ideas`;
+export const positiveReactionNames = ['THUMBS_UP', 'HEART', 'HOORAY', 'ROCKET', 'LAUGH'];

@@ -6,7 +6,7 @@ The site uses AI.Tedt.org’s Public Workbench design. The community catalog is 
 
 ## Development
 
-Use Node 22 or newer:
+Use Node 26 (or Node 22.23.4 and newer):
 
 ```sh
 npm ci

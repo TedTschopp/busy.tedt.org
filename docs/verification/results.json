@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-27T01:47:18.465Z",
+  "publicCommit": "5f5e527a916c6b67b8ad3b1a252c976d9b2fd391",
+  "apps": 51,
+  "verifiedAppPages": 51,
+  "verifiedCompleteZips": 51,
+  "verifiedZipMembers": 302,
+  "appSocialImages": 51,
+  "sourcePayloadType": "application/octet-stream",
+  "counterHealth": "ok",
+  "scheduledRun": "pending first actual schedule event",
+  "browserDownload": {
+    "appId": "community/clock",
+    "filename": "clock.zip",
+    "sha256": "1fb1ec47271591f766394767ff2059c79c298f4771ead222a69bb5151f57ff19",
+    "hashVerified": true,
+    "counterTotal": 1
+  },
+  "manualRun": {
+    "id": 40434608546,
+    "event": "workflow_dispatch",
+    "conclusion": "success",
+    "url": "https://github.com/TedTschopp/busy.tedt.org/actions/runs/40434608546"
+  },
+  "followUp": {
+    "oneTime": true,
+    "date": "2026-10-27",
+    "time": "03:30",
+    "timezone": "America/Los_Angeles",
+    "readOnly": true,
+    "automationId": "verify-first-busy-scheduled-import"
+  },
+  "counterDeploymentCredential": "awaiting user setup"
+}

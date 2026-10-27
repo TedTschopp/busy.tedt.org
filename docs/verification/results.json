@@ -30,5 +30,13 @@
     "readOnly": true,
     "automationId": "verify-first-busy-scheduled-import"
   },
-  "counterDeploymentCredential": "awaiting user setup"
+  "counterDeploymentCredential": "configured in GitHub Actions; automated deployment verified",
+  "counterDeployment": {
+    "id": 40440400572,
+    "event": "workflow_dispatch",
+    "conclusion": "success",
+    "url": "https://github.com/TedTschopp/busy.tedt.org/actions/runs/40440400572",
+    "counterPreserved": true
+  },
+  "latestVerifiedSnapshot": "2a1056f211bcd2ea24e77cb64c3077dfe2af8ffd"
 }

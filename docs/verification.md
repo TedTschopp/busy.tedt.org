@@ -32,8 +32,8 @@ The daily GitHub import is configured for 3 a.m. America/Los_Angeles and the man
 
 Ted explicitly approved a **single read-only check at 3:30 a.m. Pacific on October 27**. The Codex follow-up is created with a one-occurrence rule and may report the scheduled result; it may not edit the repository or change the GitHub schedule.
 
-## Remaining account setup
+## Completed Counter Deployment Setup
 
-The production download API and database are already deployed and healthy. The GitHub workflow for future counter-code deployments is prepared, but requires the user to save a scoped `CLOUDFLARE_API_TOKEN` repository secret. The existing Cloudflare connection can deploy resources but cannot mint that token. Automated Worker deployment will remain explicitly unqualified until the credential is saved and its workflow succeeds.
+The scoped `CLOUDFLARE_API_TOKEN` secret is configured in GitHub Actions. The [automated counter deployment](https://github.com/TedTschopp/busy.tedt.org/actions/runs/40440400572) completed successfully, including D1 migrations and Wrangler deployment. The production API remained healthy and retained the recorded `community/clock: 1` download count. The token value is not stored in this repository.
 
-Normal daily catalog updates use the deployed API and do not depend on that deployment credential. See [operations](operations.md) for setup, moderation, refresh, and rollback procedures.
+The latest verified site snapshot was `2a1056f211bcd2ea24e77cb64c3077dfe2af8ffd`; it includes the live download-count snapshot. Normal daily catalog updates use the deployed API and do not depend on the counter deployment credential. See [operations](operations.md) for setup, moderation, refresh, and rollback procedures.

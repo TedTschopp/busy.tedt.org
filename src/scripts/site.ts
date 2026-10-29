@@ -1,17 +1,11 @@
 import config from '../data/site.json';
 const root = document.documentElement;
-const system = matchMedia('(prefers-color-scheme: dark)');
 const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
 const save = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch {} };
-let theme = read('theme') ?? 'system';
-function applyTheme() {
-  root.dataset.theme = theme === 'dark' || (theme === 'system' && system.matches) ? 'dark' : 'light';
-  document.querySelectorAll<HTMLElement>('[data-theme-choice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeChoice === theme)));
+window.addEventListener('tedt:theme-change', () => {
   const frame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
   frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: root.dataset.theme } } }, 'https://giscus.app');
-}
-document.querySelectorAll<HTMLElement>('[data-theme-choice]').forEach(b => b.addEventListener('click', () => { theme = b.dataset.themeChoice!; save('theme', theme); applyTheme(); }));
-system.addEventListener('change', applyTheme); applyTheme();
+});
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 let paused = read('busy-motion') === 'paused';

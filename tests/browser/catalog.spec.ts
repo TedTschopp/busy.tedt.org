@@ -1,3 +1,4 @@
+import { routeHeaderAssets } from '../shared-header.mjs';
 import {test,expect} from '@playwright/test';
 test('search, filters, sorting, themes, and preview controls',async({page})=>{
   await page.route('https://api.busy.tedt.org/**',route=>route.fulfill({status:200,contentType:'application/json',body:'{"downloads":{}}'}));
@@ -11,9 +12,9 @@ test('search, filters, sorting, themes, and preview controls',async({page})=>{
   await page.locator('[data-reset]').click();
   await page.locator('#sort').selectOption('name');
   await expect(page.locator('[data-gallery] [data-app-card]').first()).toHaveAttribute('data-name',[...catalog].sort((a,b)=>a.name.localeCompare(b.name))[0].name);
-  await page.locator('[data-theme-choice="light"]').click();
+  await page.getByRole('button',{name:'Light',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','light');
-  await page.locator('[data-theme-choice="dark"]').click();
+  await page.getByRole('button',{name:'Dark',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.locator('[data-motion-toggle]').click();
   await expect(page.locator('html')).not.toHaveClass(/motion-on/);
@@ -36,3 +37,5 @@ test('mobile pages fit the screen and honor reduced motion',async({page})=>{
   }
   await page.goto('/ideas/');await expect(page.getByRole('link',{name:'Suggest an App',exact:true})).toHaveAttribute('href',/discussions\/new\?category=ideas/);
 });
+
+test.beforeEach(async ({ page }) => { await routeHeaderAssets(page); });

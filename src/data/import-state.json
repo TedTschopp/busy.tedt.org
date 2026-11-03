@@ -44,11 +44,18 @@
       "status": "active"
     },
     "busybar-calendar": {
-      "contentHash": "62357ac5b2d66ec3fa09fddcafbf583bda25ac22ea2d980b54d19e9cb5d1341d",
+      "contentHash": "c69ea50390be422066cac6c7f0f7f42b96c8c0d41da72d90cc6fcb6b7b98e4e7",
       "sourceCommit": "2580e9aa0b4c667ae7906474b6a767d72b3f4fe0",
       "createdAt": "2026-10-28T06:39:47Z",
       "updatedAt": "2026-10-28T06:39:47Z",
-      "status": "active"
+      "status": "active",
+      "upstreamContentHash": "62357ac5b2d66ec3fa09fddcafbf583bda25ac22ea2d980b54d19e9cb5d1341d",
+      "localPatches": [
+        {
+          "path": "patches/community/busybar-calendar/0001-certifi-2026.10.18.patch",
+          "sha256": "58104931bda81be4a3fdc51304e78e8214d456a87e069028cb2aff8deb6a5d5d"
+        }
+      ]
     },
     "busybar-codex": {
       "contentHash": "d2341bb10d073f2a0ab2163793a9c4ea645818b9228abf1ee646ac8bb8b0b205",

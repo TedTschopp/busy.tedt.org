@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "upstreamContentHash": "62357ac5b2d66ec3fa09fddcafbf583bda25ac22ea2d980b54d19e9cb5d1341d",
+  "patches": [
+    {
+      "path": "patches/community/busybar-calendar/0001-certifi-2026.10.18.patch",
+      "sha256": "58104931bda81be4a3fdc51304e78e8214d456a87e069028cb2aff8deb6a5d5d"
+    }
+  ]
+}

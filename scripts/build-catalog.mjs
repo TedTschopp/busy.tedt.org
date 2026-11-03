@@ -5,6 +5,7 @@ import AdmZip from 'adm-zip';
 import sharp from 'sharp';
 import { ROOT, SOURCES, inspectApp, readJson, sha256, encodePath, authorSlug } from './catalog-lib.mjs';
 import { deterministicZip } from './zip.mjs';
+import { verifyProvenance } from './local-patches.mjs';
 
 const write = (file, data) => { mkdirSync(path.dirname(file), { recursive: true }); writeFileSync(file, data); };
 const state = readJson(path.join(ROOT, 'src/data/import-state.json'), { apps: {} });
@@ -30,7 +31,7 @@ for (const source of SOURCES) {
         return { createdAt: dates.at(-1) ?? '2026-01-01T00:00:00Z', updatedAt: dates[0] ?? '2026-01-01T00:00:00Z' };
       } catch { return { createdAt: null, updatedAt: null }; }
     })();
-    if (source === 'community' && (!dates || dates.contentHash !== contentHash)) throw new Error(`${id}: imported payload differs from its provenance record`);
+    if (source === 'community') verifyProvenance(ROOT, slug, contentHash, dates);
     const prefix = `/downloads/${source}/${slug}/${revision}`;
     const meta = await sharp(path.join(dir, manifest.preview), { animated: true }).metadata();
     if (!['gif', 'png', 'jpeg', 'webp'].includes(meta.format) || (meta.width ?? 0) > 4096 || (meta.pageHeight ?? meta.height ?? 0) > 4096) throw new Error(`${id}: invalid preview image`);
@@ -65,7 +66,7 @@ for (const source of SOURCES) {
       animated: (meta.pages ?? 1) > 1,
       authorSlug: authorSlug(manifest.author), revision, contentHash,
       status: dates?.status ?? 'active', createdAt: dates?.createdAt ?? null, updatedAt: dates?.updatedAt ?? null,
-      provenance: { repository: source === 'community' ? 'maxswinkels/busybar-apps' : 'TedTschopp/busy.tedt.org', path: source === 'community' ? `apps/${slug}` : `apps/tedt/${slug}`, commit: dates?.sourceCommit ?? null },
+      provenance: { repository: source === 'community' ? 'maxswinkels/busybar-apps' : 'TedTschopp/busy.tedt.org', path: source === 'community' ? `apps/${slug}` : `apps/tedt/${slug}`, commit: dates?.sourceCommit ?? null, ...(dates?.localPatches?.length ? { upstreamContentHash: dates.upstreamContentHash, localPatches: dates.localPatches } : {}) },
       url: `/apps/${source}/${slug}/`, downloadUrl, zipSha256: sha256(zip), zipBytes: zip.length, files,
       readme: readme?.path ?? null,
       requirements: requirements?.bytes.toString('utf8').trim() ?? '',

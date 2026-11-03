@@ -34,7 +34,7 @@ Set `BUSY_TEST_URL` when the preview runs on a different port. The suite checks 
 - `src/data/community.json`: GitHub Discussions read model.
 - `src/data/downloads.json`: last successful download-start snapshot.
 
-Generated downloads, previews, social cards, and catalog files are build artifacts. Original app files retain their bytes and paths. Community ZIPs additionally include the upstream MIT license notice under `LICENSES/UPSTREAM-MIT.txt`.
+Generated downloads, previews, social cards, and catalog files are build artifacts. Apps retain their upstream bytes unless a reviewed local dependency patch is declared in `patches/community/<slug>/series.json`. The importer preserves the upstream commit/hash, applies the ordered hashed patches to staging, and records the effective download hash separately. App pages disclose local fixes. Community ZIPs additionally include the upstream MIT license notice under `LICENSES/UPSTREAM-MIT.txt`.
 
 Individual payloads are served with a `.bin` suffix and a download filename. This keeps source HTML and SVG from becoming executable pages on this website’s origin.
 

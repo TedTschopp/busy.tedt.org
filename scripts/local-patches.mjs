@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, lstatSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { safePath, sha256 } from './catalog-lib.mjs';
 
 const DIGEST = /^[a-f0-9]{64}$/;
@@ -37,7 +38,7 @@ export function patchSeries(root, slug) {
   return { upstreamContentHash: series.upstreamContentHash, localPatches: patches };
 }
 
-export function applyLocalPatches({ root, slug, directory, upstreamContentHash }) {
+export function applyLocalPatches({ root, slug, directory, upstreamContentHash, reverse = false }) {
   const series = patchSeries(root, slug);
   if (!series) return null;
   if (series.upstreamContentHash !== upstreamContentHash) throw new Error(`${slug}: upstream changed; review and rebase local patches`);
@@ -47,17 +48,18 @@ export function applyLocalPatches({ root, slug, directory, upstreamContentHash }
   const git = (...args) => execFileSync('git', ['-c', 'core.hooksPath=/dev/null', `--git-dir=${gitDirectory}`, `--work-tree=${directory}`, ...args], { cwd: directory, stdio: 'pipe', maxBuffer: 10_000_000 });
   try {
     execFileSync('git', ['init', '--bare', '--template=', gitDirectory], { stdio: 'pipe' });
-    for (const patch of series.localPatches) {
+    for (const patch of reverse ? [...series.localPatches].reverse() : series.localPatches) {
       const file = regularFile(root, patch.path);
-      const changes = git('apply', '--numstat', '-z', '--', file).toString('utf8').split('\0').filter(Boolean);
+      const direction = reverse ? ['--reverse'] : [];
+      const changes = git('apply', ...direction, '--numstat', '-z', '--', file).toString('utf8').split('\0').filter(Boolean);
       if (!changes.length) throw new Error(`${slug}: empty local patch`);
       for (const change of changes) {
         const match = change.match(/^\d+\t\d+\t(.+)$/);
         if (!match) throw new Error(`${slug}: unsupported patch operation`);
         regularFile(directory, match[1]);
       }
-      git('apply', '--check', '--', file);
-      git('apply', '--', file);
+      git('apply', ...direction, '--check', '--', file);
+      git('apply', ...direction, '--', file);
     }
     return series;
   } finally { rmSync(gitDirectory, { recursive: true, force: true }); }
@@ -66,6 +68,6 @@ export function applyLocalPatches({ root, slug, directory, upstreamContentHash }
 export function verifyProvenance(root, slug, contentHash, record) {
   if (!record || record.contentHash !== contentHash) throw new Error(`community/${slug}: imported payload differs from its provenance record`);
   const series = patchSeries(root, slug);
-  if (series ? record.upstreamContentHash !== series.upstreamContentHash || JSON.stringify(record.localPatches) !== JSON.stringify(series.localPatches) : record.localPatches?.length || record.upstreamContentHash && record.upstreamContentHash !== contentHash) throw new Error(`${slug}: local patch provenance differs from the reviewed series`);
+  if (series ? record.upstreamContentHash !== series.upstreamContentHash || !isDeepStrictEqual(record.localPatches, series.localPatches) : record.localPatches?.length || record.upstreamContentHash && record.upstreamContentHash !== contentHash) throw new Error(`${slug}: local patch provenance differs from the reviewed series`);
   return series;
 }

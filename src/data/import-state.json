@@ -142,11 +142,18 @@
       "status": "active"
     },
     "gcal-glance": {
-      "contentHash": "e652e22c685e1727e342f2a32a747630d51248d6c6375d17255ad1c58c066931",
+      "contentHash": "f4726d2678f2babd68c75c0e593c5ea50f8ae95d46da36c0302a6af9f4f3d9c3",
       "sourceCommit": "26b19ba9ce2ba192c45b4c0eadcfad53df42b153",
       "createdAt": "2026-08-18T08:56:22-04:00",
       "updatedAt": "2026-09-07T02:50:55-04:00",
-      "status": "active"
+      "status": "active",
+      "upstreamContentHash": "e652e22c685e1727e342f2a32a747630d51248d6c6375d17255ad1c58c066931",
+      "localPatches": [
+        {
+          "path": "patches/community/gcal-glance/0001-python311-pillow13.patch",
+          "sha256": "93c1b9a88b3f4e1d1e31690331af29e3cc11174f19dc22c3e6f243ca4e73f65a"
+        }
+      ]
     },
     "github-actions": {
       "contentHash": "fee70bdae3e0c7d07aa943a3d7636bf07a18f4d5f30897b2021b82aefd0e3d7c",

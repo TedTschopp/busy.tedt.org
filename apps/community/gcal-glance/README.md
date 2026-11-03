@@ -116,7 +116,7 @@ All configuration options can be set via command-line arguments or `.env` enviro
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11+
 - [uv](https://github.com/astral-sh/uv) (recommended) or standard Python virtual environment
 
 ### 1. Normal Usage (Direct to Hardware)
@@ -217,3 +217,7 @@ uv run pytest apps/gcal-glance/tests -v
 uv run ruff check apps/gcal-glance
 uv run ruff format --check apps/gcal-glance
 ```
+
+### Local Dependency Maintenance
+
+This distribution requires Python 3.11 or newer and Pillow 13 to include the available image-decoder security fixes. The original upstream revision and this local dependency patch are recorded in the catalog provenance.

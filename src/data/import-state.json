@@ -149,7 +149,7 @@
       "status": "active"
     },
     "gcal-glance": {
-      "contentHash": "f4726d2678f2babd68c75c0e593c5ea50f8ae95d46da36c0302a6af9f4f3d9c3",
+      "contentHash": "a82c947dcc97ed7067fbf2b70fc325b32fe985d0e5e76857e3fbbaab1fe86a2f",
       "sourceCommit": "26b19ba9ce2ba192c45b4c0eadcfad53df42b153",
       "createdAt": "2026-08-18T08:56:22-04:00",
       "updatedAt": "2026-09-07T02:50:55-04:00",
@@ -159,6 +159,10 @@
         {
           "path": "patches/community/gcal-glance/0001-python311-pillow13.patch",
           "sha256": "93c1b9a88b3f4e1d1e31690331af29e3cc11174f19dc22c3e6f243ca4e73f65a"
+        },
+        {
+          "path": "patches/community/gcal-glance/0002-certifi-2026.10.18.patch",
+          "sha256": "b0f567f08335cf2ef7cb06059ff273d19356ea1d38e096310d987ad04a99fc49"
         }
       ]
     },

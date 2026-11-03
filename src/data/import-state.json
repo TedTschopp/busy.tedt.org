@@ -2,10 +2,10 @@
   "repository": "maxswinkels/busybar-apps",
   "apps": {
     "apple-music-winamp": {
-      "contentHash": "04caf2eb3881fc99387f00b967e1ef04ec3765967f0f6e5b88f4bf6349a77ee2",
-      "sourceCommit": "26b19ba9ce2ba192c45b4c0eadcfad53df42b153",
+      "contentHash": "9f3549f4cf2d79ee93b0d88aecf3db38381846ce246fbc33d43cf9be6df9fa4b",
+      "sourceCommit": "2580e9aa0b4c667ae7906474b6a767d72b3f4fe0",
       "createdAt": "2026-10-15T07:36:45-06:00",
-      "updatedAt": "2026-10-15T07:36:45-06:00",
+      "updatedAt": "2026-10-28T00:39:12-06:00",
       "status": "active"
     },
     "audio-visualizer": {
@@ -41,6 +41,13 @@
       "sourceCommit": "26b19ba9ce2ba192c45b4c0eadcfad53df42b153",
       "createdAt": "2026-08-11T10:14:57+02:00",
       "updatedAt": "2026-08-17T07:39:30+02:00",
+      "status": "active"
+    },
+    "busybar-calendar": {
+      "contentHash": "62357ac5b2d66ec3fa09fddcafbf583bda25ac22ea2d980b54d19e9cb5d1341d",
+      "sourceCommit": "2580e9aa0b4c667ae7906474b6a767d72b3f4fe0",
+      "createdAt": "2026-10-28T06:39:47Z",
+      "updatedAt": "2026-10-28T06:39:47Z",
       "status": "active"
     },
     "busybar-codex": {
@@ -135,11 +142,22 @@
       "status": "active"
     },
     "gcal-glance": {
-      "contentHash": "e652e22c685e1727e342f2a32a747630d51248d6c6375d17255ad1c58c066931",
+      "contentHash": "a82c947dcc97ed7067fbf2b70fc325b32fe985d0e5e76857e3fbbaab1fe86a2f",
       "sourceCommit": "26b19ba9ce2ba192c45b4c0eadcfad53df42b153",
       "createdAt": "2026-08-18T08:56:22-04:00",
       "updatedAt": "2026-09-07T02:50:55-04:00",
-      "status": "active"
+      "status": "active",
+      "upstreamContentHash": "e652e22c685e1727e342f2a32a747630d51248d6c6375d17255ad1c58c066931",
+      "localPatches": [
+        {
+          "path": "patches/community/gcal-glance/0001-python311-pillow13.patch",
+          "sha256": "93c1b9a88b3f4e1d1e31690331af29e3cc11174f19dc22c3e6f243ca4e73f65a"
+        },
+        {
+          "path": "patches/community/gcal-glance/0002-certifi-2026.10.18.patch",
+          "sha256": "b0f567f08335cf2ef7cb06059ff273d19356ea1d38e096310d987ad04a99fc49"
+        }
+      ]
     },
     "github-actions": {
       "contentHash": "fee70bdae3e0c7d07aa943a3d7636bf07a18f4d5f30897b2021b82aefd0e3d7c",

@@ -34,7 +34,7 @@ Set `BUSY_TEST_URL` when the preview runs on a different port. The suite checks 
 - `src/data/community.json`: GitHub Discussions read model.
 - `src/data/downloads.json`: last successful download-start snapshot.
 
-Generated downloads, previews, social cards, and catalog files are build artifacts. Original app files retain their bytes and paths. Community ZIPs additionally include the upstream MIT license notice under `LICENSES/UPSTREAM-MIT.txt`.
+Generated downloads, previews, social cards, and catalog files are build artifacts. Apps retain their upstream bytes unless a reviewed local dependency patch is declared in `patches/community/<slug>/series.json`. The importer preserves the upstream commit/hash, applies the ordered hashed patches to staging, and records the effective download hash separately. App pages disclose local fixes. Community ZIPs additionally include the upstream MIT license notice under `LICENSES/UPSTREAM-MIT.txt`.
 
 Individual payloads are served with a `.bin` suffix and a download filename. This keeps source HTML and SVG from becoming executable pages on this website’s origin.
 
@@ -63,3 +63,11 @@ These are best-effort package-download starts, not completed transfers or instal
 ## License and Attribution
 
 Gallery code and contributed apps are MIT licensed. App authors and original notices are retained. See [LICENSE](LICENSE), [upstream license](docs/UPSTREAM-LICENSE), and [third-party attribution](docs/UPSTREAM-ATTRIBUTION.md). The design and masthead come from TedT.org and AI.Tedt.org. BUSY brand/device artwork is © Flipper Devices, CC BY 4.0. Fonts retain their open-font licenses.
+
+## Shared TedT.org Navigation
+
+The global header loads `https://tedt.org/assets/global-header/v1/header.js`. Menu changes belong in the TedT.org repository, rather than in this site. The small local fallback and pre-paint bootstrap keep navigation and appearance usable while loading. The shared `tedt-appearance` cookie and `tedt:theme-change` event synchronize appearance; keep local site navigation and application controls separate. See https://tedt.org/docs/global-header.md for the embed contract.
+
+## Shared Visitor Analytics
+
+Published HTML uses the deferred TedT.org analytics v1 runtime for GA4, Microsoft Clarity, and Cloudflare Web Analytics. Authentication/payment operations, API responses, and independent downloads are excluded. Run `python3 scripts/site_analytics.py dist --mode standard --check` on the final publication directory. Configuration and the integration contract are maintained at https://github.com/TedTschopp/tedt.org/blob/main/docs/analytics.md.

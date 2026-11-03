@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "upstreamContentHash": "e652e22c685e1727e342f2a32a747630d51248d6c6375d17255ad1c58c066931",
+  "patches": [
+    {
+      "path": "patches/community/gcal-glance/0001-python311-pillow13.patch",
+      "sha256": "93c1b9a88b3f4e1d1e31690331af29e3cc11174f19dc22c3e6f243ca4e73f65a"
+    },
+    {
+      "path": "patches/community/gcal-glance/0002-certifi-2026.10.18.patch",
+      "sha256": "b0f567f08335cf2ef7cb06059ff273d19356ea1d38e096310d987ad04a99fc49"
+    }
+  ]
+}

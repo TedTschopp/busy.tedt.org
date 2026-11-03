@@ -16,7 +16,7 @@ for (const app of apps) {
     const bytes = readFileSync(path.join(dist,decodeURIComponent(file.url)));
     if (sha256(bytes)!==file.sha256 || sha256(zip.readFile(file.path))!==file.sha256) throw new Error(`${app.id}: file mismatch ${file.path}`);
   }
-  for (const preview of [app.preview,app.stillPreview]) if (!existsSync(path.join(dist,preview))) throw new Error(`Missing preview: ${preview}`);
+  for (const preview of [app.preview,app.stillPreview,app.socialImage]) if (!existsSync(path.join(dist,preview))) throw new Error(`Missing preview: ${preview}`);
 }
 for (const route of ['index.html','ideas/index.html','contributors/index.html','submit/index.html','about/index.html','404.html','sitemap.xml','robots.txt','social/catalog.jpg','CNAME']) if (!existsSync(path.join(dist,route))) throw new Error(`Missing route: ${route}`);
 console.log(`Verified ${apps.length} pages, exact ZIPs, individual files, metadata, and public routes.`);

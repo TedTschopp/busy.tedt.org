@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
       deploy: ${{ steps.changes.outputs.deploy }}
@@ -45,7 +45,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - name: Determine publication changes
         id: changes
@@ -79,6 +78,10 @@ jobs:
           fi
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           node -e 'require("fs").writeFileSync("dist/version.json", JSON.stringify({commit:process.argv[1]})+"\n")' "$(git rev-parse HEAD)"
+      - name: Verify shared analytics coverage
+        run: |
+          python3 scripts/site_analytics.py dist --mode standard
+          python3 scripts/site_analytics.py dist --mode standard --check
       - uses: actions/upload-pages-artifact@v4
         if: steps.changes.outputs.deploy == 'true'
         with:
@@ -86,7 +89,7 @@ jobs:
   deploy:
     needs: build
     if: needs.build.outputs.deploy == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.pages.outputs.page_url }}

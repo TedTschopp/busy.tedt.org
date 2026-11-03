@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, writeFileSync, cpSync, rmSync, rena
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, safePath, inspectApp, readJson } from './catalog-lib.mjs';
+import { applyLocalPatches, verifyProvenance } from './local-patches.mjs';
 
 const UPSTREAM = 'https://github.com/maxswinkels/busybar-apps.git';
 const git = (dir, ...args) => execFileSync('git', ['-c', 'core.hooksPath=/dev/null', '-C', dir, ...args], { maxBuffer: 100 * 1024 * 1024 });
@@ -49,18 +50,22 @@ export function syncUpstream({ root = ROOT, upstreamDir, ref = 'HEAD' } = {}) {
         mkdirSync(path.dirname(target), { recursive: true });
         writeFileSync(target, git(upstreamDir, 'cat-file', 'blob', f.object));
       }
+      const upstreamContentHash = inspectApp(dest, slug).contentHash;
+      const patches = applyLocalPatches({ root, slug, directory: dest, upstreamContentHash });
       const { contentHash } = inspectApp(dest, slug);
       const old = previous.apps[slug];
-      if (old?.contentHash === contentHash) nextApps[slug] = { ...old, status: 'active' };
+      if (old?.localPatches?.length && !patches) throw new Error(`${slug}: reviewed local patch series is missing`);
+      if (old?.contentHash === contentHash && JSON.stringify(old.localPatches ?? []) === JSON.stringify(patches?.localPatches ?? [])) nextApps[slug] = { ...old, status: 'active' };
       else {
         const dates = git(upstreamDir, 'log', '--format=%aI', commit, '--', `apps/${slug}/`).toString().trim().split('\n').filter(Boolean);
-        nextApps[slug] = { contentHash, sourceCommit: commit, createdAt: old?.createdAt ?? dates.at(-1), updatedAt: dates[0], status: 'active' };
+        nextApps[slug] = { contentHash, sourceCommit: (old?.upstreamContentHash ?? old?.contentHash) === upstreamContentHash ? old.sourceCommit : commit, createdAt: old?.createdAt ?? dates.at(-1), updatedAt: dates[0], status: 'active', ...(patches ?? {}) };
       }
     }
     for (const [slug, old] of Object.entries(previous.apps)) {
       if (groups.has(slug)) continue;
       if (!existsSync(path.join(currentApps, slug))) throw new Error(`Archived app folder missing: ${slug}`);
       cpSync(path.join(currentApps, slug), path.join(stagedApps, slug), { recursive: true });
+      verifyProvenance(root, slug, inspectApp(path.join(stagedApps, slug), slug).contentHash, old);
       nextApps[slug] = { ...old, status: 'archived' };
     }
     const changed = JSON.stringify(nextApps) !== JSON.stringify(previous.apps);

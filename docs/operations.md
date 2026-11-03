@@ -34,7 +34,11 @@ The Worker can also be deployed with the connected Cloudflare API using the exac
 
 ## Recovery
 
-For an importer failure, inspect the failed app and the pinned upstream commit in the run logs. Fix the importer or upstream data, rerun tests, and dispatch a fresh run. Original payload bytes should never be rewritten to fix site rendering.
+For an importer failure, inspect the failed app and the pinned upstream commit in the run logs. Fix the importer or upstream data, rerun tests, and dispatch a fresh run. Payload bytes should never be rewritten to fix site rendering.
+
+Reviewed dependency fixes use `patches/community/<slug>/series.json` with `version: 1`, the original `upstreamContentHash`, and an ordered `patches` array of repository-relative `path` and `sha256` pairs. Each path stays under that app's patch directory and names a plain unified `.patch` file affecting existing regular text files. The importer applies patches only to freshly staged source bytes, validates the resulting app, and records the original upstream hash plus `localPatches` alongside the effective `contentHash`. Patch files remain outside the downloadable app; public provenance links to them. Existing unpatched records remain valid.
+
+When upstream changes a patched app, the import stops before replacing the catalog. Review and rebase the series against the new upstream hash, update patch digests, then import and validate again. Do not edit a provenance hash merely to accept unrecorded bytes. Preserve an archived app's effective bytes and patch references without applying patches twice. The importer never runs app code, tests, installers, or hooks.
 
 To roll back a site release, revert the faulty source commit through a reviewed Git commit and publish it. When rolling back imported apps, restore both the app folders and matching import-state records together. A subsequent import will resume tracking the current upstream version.
 

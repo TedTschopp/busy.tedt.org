@@ -39,3 +39,13 @@ test('mobile pages fit the screen and honor reduced motion',async({page})=>{
 });
 
 test.beforeEach(async ({ page }) => { await routeHeaderAssets(page); });
+
+test('patched downloads disclose original provenance and fit a mobile screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('https://api.busy.tedt.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{"downloads":{}}' }));
+  await page.goto('/apps/community/gcal-glance/');
+  await expect(page.getByText('Includes reviewed local dependency fixes.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('link', { name: '0001-python311-pillow13.patch', exact: true })).toHaveAttribute('href', /patches\/community\/gcal-glance\/0001-python311-pillow13.patch$/);
+  await expect(page.getByRole('link', { name: 'View Upstream Source on GitHub →', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});

@@ -25,7 +25,7 @@ function fixture(t) {
   commit(up); syncUpstream({ root, upstreamDir: up });
   return { root, up, base: commit(root) };
 }
-function series(root, entries) {
+function series(root, entries, upstreamContentHash) {
   const file = path.join(root, 'src/data/import-state.json');
   const state = JSON.parse(readFileSync(file));
   const directory = path.join(root, 'patches/community/clock'); mkdirSync(directory, { recursive: true });
@@ -34,7 +34,7 @@ function series(root, entries) {
     writeFileSync(path.join(directory, name), text);
     return { path: `patches/community/clock/${name}`, sha256: sha256(text) };
   });
-  writeFileSync(path.join(directory, 'series.json'), JSON.stringify({ version: 1, upstreamContentHash: state.apps.clock.upstreamContentHash ?? state.apps.clock.contentHash, patches }));
+  writeFileSync(path.join(directory, 'series.json'), JSON.stringify({ version: 1, upstreamContentHash: upstreamContentHash ?? state.apps.clock.upstreamContentHash ?? state.apps.clock.contentHash, patches }));
 }
 
 test('PR guard reconstructs declared patches from a trusted unpatched base', t => {
@@ -66,13 +66,41 @@ test('changing payload and its effective hash cannot authorize an undeclared edi
 });
 
 test('PR guard preserves upstream identity and rejects direct dependency edits', t => {
-  const { root, base } = fixture(t);
+  const { root, up, base } = fixture(t);
   writeFileSync(path.join(root, 'apps/community/clock/app.py'), '# direct edit\n'); commit(root);
   assert.throws(() => verifyImportChanges({ root, base }), /reviewed local patch series/);
   const file = path.join(root, 'src/data/import-state.json');
   const state = JSON.parse(readFileSync(file)); state.apps.clock.sourceCommit = 'f'.repeat(40);
   writeFileSync(file, JSON.stringify(state)); commit(root);
-  assert.throws(() => verifyImportChanges({ root, base }), /cannot rewrite upstream identity/);
+  assert.throws(() => verifyImportChanges({ root, base, upstreamDir: up }), /authoritative upstream default-branch history/);
+});
+
+test('PR guard accepts patches rebased onto verified upstream updates', t => {
+  const { root, up } = fixture(t);
+  series(root, [['0001.patch', '# upstream', '# local']]);
+  syncUpstream({ root, upstreamDir: up }); const base = commit(root);
+  writeFileSync(path.join(up, 'apps/clock/app.py'), '# upstream v2\n'); commit(up);
+  const upstreamHash = inspectApp(path.join(up, 'apps/clock'), 'clock').contentHash;
+  series(root, [['0001.patch', '# upstream v2', '# local v2']], upstreamHash);
+  syncUpstream({ root, upstreamDir: up }); commit(root);
+  assert.equal(verifyImportChanges({ root, base, upstreamDir: up }), 1);
+});
+
+test('PR guard rejects commits outside upstream main and false upstream hashes', t => {
+  const { root, up, base } = fixture(t);
+  git(up, 'checkout', '-b', 'unpublished');
+  writeFileSync(path.join(up, 'apps/clock/app.py'), '# unpublished\n'); const unpublished = commit(up);
+  git(up, 'checkout', 'main');
+  const file = path.join(root, 'src/data/import-state.json');
+  const state = JSON.parse(readFileSync(file)); state.apps.clock.sourceCommit = unpublished;
+  writeFileSync(file, JSON.stringify(state)); commit(root);
+  assert.throws(() => verifyImportChanges({ root, base, upstreamDir: up }), /authoritative upstream default-branch history/);
+  writeFileSync(path.join(up, 'apps/clock/app.py'), '# published v2\n'); const published = commit(up);
+  state.apps.clock.sourceCommit = published;
+  state.apps.clock.updatedAt = git(up, 'log', '-1', '--format=%aI', published, '--', 'apps/clock/');
+  writeFileSync(file, JSON.stringify(state));
+  series(root, [['0001.patch', '# upstream', '# forged']], 'f'.repeat(64)); commit(root);
+  assert.throws(() => verifyImportChanges({ root, base, upstreamDir: up }), /upstream.*hash|upstream.*changed/i);
 });
 
 test('PR guard accepts unchanged unpatched records and JSON key reordering', t => {

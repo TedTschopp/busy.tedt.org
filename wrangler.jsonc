@@ -6,5 +6,11 @@
   "routes": [{ "pattern": "api.busy.tedt.org", "custom_domain": true }],
   "d1_databases": [{ "binding": "DB", "database_name": "busy-apps-metrics", "database_id": "6a663007-0529-43c4-b407-446863e1e9a6", "migrations_dir": "worker/migrations" }],
   "ratelimits": [{ "name": "RATE_LIMITER", "namespace_id": "10427", "simple": { "limit": 30, "period": 60 } }],
-  "observability": { "enabled": false }
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "redact_query_string": true,
+    "logs": { "enabled": true, "invocation_logs": true, "persist": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": false, "persist": false, "head_sampling_rate": 0 }
+  }
 }
